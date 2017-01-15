@@ -11,7 +11,7 @@ import server.db.DBConnector;
  * @author Basel
  *
  */
-public class BooksInSubjectHandler  extends AbstractRequestHandler {
+public class BooksInSubjectHandler extends AbstractRequestHandler {
 
 	public BooksInSubjectHandler(DBConnector dbCon) {
 		super(dbCon);

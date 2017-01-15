@@ -318,4 +318,51 @@ public class DBConnector {
 			return false;
 		}
 	}
+	
+	public ArrayList<Book> getAllBooks(String subjectID){
+		try {
+			Statement st = connDB.createStatement();
+			ResultSet rs = st
+					.executeQuery("SELECT * "
+							+ "FROM books "
+							+ "WHERE BookID NOT IN (SELECT BookID "
+							+ "FROM books_in_subject "
+							+ "WHERE subjectID='"+subjectID+"');"); 
+			
+			ArrayList<Book> books= new ArrayList<Book>();
+			while(rs.next()){
+				Book book= new Book(rs.getString(1), 
+						rs.getString(2), 
+						rs.getString(3), 
+						rs.getString(4), 
+						rs.getString(5), 
+						rs.getString(6), 
+						rs.getString(7), 
+						rs.getString(8));
+				books.add(book);
+			}
+			rs.close();
+			
+			return books;
+		}
+		catch (SQLException ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+	
+	public boolean addBooksToSubject(String subjectID, ArrayList<String> booksIDs){
+		try {
+			Statement st = connDB.createStatement();
+			for(String s : booksIDs)
+				st.executeUpdate("INSERT INTO books_in_subject "
+						+ "VALUES('"+s+"','"+subjectID+"');"); 
+			
+			return true;
+		}
+		catch (SQLException ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
 }

@@ -16,6 +16,7 @@ import client.controller.ControllerType;
 import client.controller.Controllers;
 import client.controller.SubjectsController;
 import client.entities.Book;
+import protocol.response.BooksInSubjectResponse;
 import protocol.response.RemoveBooksFromSubjectResponse;
 
 /**
@@ -24,14 +25,28 @@ import protocol.response.RemoveBooksFromSubjectResponse;
  */
 public class BooksInSubjectGUI extends JFrame {
 
+	private String subjectName;
+	private String subjectID;
 	private JButton addBookButton;
 	private JButton removeBookButton;
 	private ArrayList<BooksInSubjectElementGUI> booksGUIElements;
+	private ArrayList<Book> books;
+	private static BooksInSubjectGUI currentInstance;
 	
-	public BooksInSubjectGUI(String subjectName, ArrayList<Book> books){
+	public BooksInSubjectGUI(String subjectID, String subjectName){
 		super(subjectName);
+		if(currentInstance != null)
+			currentInstance.dispose();
+		currentInstance= this;
+		this.subjectID= subjectID;
+		this.subjectName= subjectName;
 		Container pane= getContentPane();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+		
+		SubjectsController controller= (SubjectsController) 
+				Controllers.getInstance().getController(ControllerType.SUBJECT_CONTROLLER);
+		BooksInSubjectResponse resp= controller.getBooksInSubject(subjectID);
+		books= resp.getBooks();
 		
 		// Initializing up buttons
 		addBookButton= new JButton("Add Book");
@@ -65,27 +80,26 @@ public class BooksInSubjectGUI extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent a) {
 			if(a.getSource() == addBookButton){
-				
+				new BooksListGUI(subjectID, subjectName);
 			}
 			else if(a.getSource() == removeBookButton){
 				ArrayList<BooksInSubjectElementGUI> arr= new ArrayList<BooksInSubjectElementGUI>();
 				for(BooksInSubjectElementGUI elem: booksGUIElements)
 					if(elem.isSelected())
 						arr.add(elem);
-				if(arr.size() == 0)
+				if(arr.size() == 0)	// No book is selected to be removed
 					JOptionPane.showMessageDialog(null, "Please select books that you wish to remove");
-				else{
-//					String str= "You selected:\n";
-//					for(BooksInSubjectElementGUI elem: arr)
-//						str += elem.getName() + "\n";
-//					JOptionPane.showMessageDialog(null, str);
-					
+				else{	// One ore more books is selected
 					ArrayList<String> booksIDs= new ArrayList<String>();
 					for(BooksInSubjectElementGUI elem: arr)
 						booksIDs.add(elem.getID());
 					SubjectsController controller= (SubjectsController) 
 							Controllers.getInstance().getController(ControllerType.SUBJECT_CONTROLLER);
 					RemoveBooksFromSubjectResponse resp= controller.removeBooksFromSubject(booksIDs);
+					if(resp.getOperationStatus())
+						new BooksInSubjectGUI(subjectID, subjectName);
+					else
+						JOptionPane.showMessageDialog(null, "ERROR");
 				}
 			}
 		}

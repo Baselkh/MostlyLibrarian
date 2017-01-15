@@ -65,11 +65,6 @@ public class SubjectsInCategoryGUI extends JFrame {
 		}
 		catch(IOException e){}	///////Messing Code/////////
 		createFolderClickListener();
-//		int i= 0;
-//		for(String s: subjectsIDs){
-//			iconsPanel.add(makeFolderIcon(s, subjectsNames.get(i)));
-//			i++;
-//		}
 		for(int i= 0; i < subjectsIDs.size(); i++)
 			iconsPanel.add(makeFolderIcon(subjectsIDs.get(i), subjectsNames.get(i)));
 		pane.add(iconsPanel);
@@ -92,14 +87,7 @@ public class SubjectsInCategoryGUI extends JFrame {
 				BooksInSubjectResponse resp= controller.getBooksInSubject(subjectID);
 				ArrayList<Book> books= resp.getBooks();
 				
-//				String str="";
-//				for(Book b: books){
-//					str+= b.getBookID()+"\n";
-//					str+= b.getTitle()+"\n#########\n";
-//				}
-//				JOptionPane.showMessageDialog(null, str);
-				
-				new BooksInSubjectGUI(subject.getName(), books);
+				new BooksInSubjectGUI(subject.getID(), subject.getName());
 			}
 		};
 	}
@@ -108,13 +96,5 @@ public class SubjectsInCategoryGUI extends JFrame {
 		SubjectFolderElement folder= new SubjectFolderElement(subjectID, subjectName, folderIcon);
 		folder.addMouseListener(mouseClickListener);
 		return folder;
-	}
-	
-	public static void main(String[] args){
-		ArrayList<Book> books= new ArrayList<Book>();
-		books.add(new Book("1", "Book1", "Arabic", "ksadsda", "sadsf", "sadsad", "sadj, pojsad, oasj", "Author"));
-		books.add(new Book("2", "Book2", "Arabic", "ksadsda", "sadsf", "sadsad", "sadj, pojsad, oasj", "ASspafh Fasd"));
-		books.add(new Book("3", "Book3", "Arabic", "ksadsda", "sadsf", "sadsad", "sadj, pojsad, oasj", "ASspafh Fasd"));
-		new BooksInSubjectGUI("Test", books);
 	}
 }
