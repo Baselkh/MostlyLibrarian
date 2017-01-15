@@ -24,6 +24,10 @@ import client.entities.Book;
 import protocol.response.BooksInSubjectResponse;
 import protocol.response.SubjectsInCategoryResponse;
 
+/**
+ * @author Basel
+ *
+ */
 public class SubjectsInCategoryGUI extends JFrame {
 
 	private JButton createSubjectButton;

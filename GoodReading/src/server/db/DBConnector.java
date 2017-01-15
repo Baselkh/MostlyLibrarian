@@ -303,5 +303,19 @@ public class DBConnector {
 			return null;
 		}
 	}
-
+	
+	public boolean removeBooksFromSubject(ArrayList<String> booksIDs){
+		try {
+			Statement st = connDB.createStatement();
+			for(String bookID : booksIDs)
+				st.executeUpdate("DELETE "
+						+ "FROM books_in_subject "
+						+ "WHERE BookID='"+bookID+"';"); 
+			return true;
+		}
+		catch (SQLException ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
 }

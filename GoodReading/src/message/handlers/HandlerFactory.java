@@ -35,6 +35,8 @@ public class HandlerFactory {
 			return new SubjectsInCategoryRequestHandler(dbCon);
 		case BOOKS_IN_SUBJECT_REQUEST:
 			return new BooksInSubjectHandler(dbCon);
+		case REMOVE_BOOKS_REQUEST:
+			return new RemoveBooksFromSubjectRequestHandler(dbCon);
 	//	case SEARCH_Feedback_REQUEST:
 	// new FeedbacksGhandler(dbCon);
 //		case LABORATORYREFERRAL_REQUEST:

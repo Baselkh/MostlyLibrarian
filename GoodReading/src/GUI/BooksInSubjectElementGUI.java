@@ -99,4 +99,16 @@ public class BooksInSubjectElementGUI extends JPanel {
 			label.setBorder(BorderFactory.createEmptyBorder(2, horizontalPadding, 2, horizontalPadding));
 		}
 	}
+	
+	public boolean isSelected(){
+		return rb.isSelected();
+	}
+	
+	public String getName(){
+		return titleLabel.getText();
+	}
+	
+	public String getID(){
+		return bookIDLabel.getText();
+	}
 }
