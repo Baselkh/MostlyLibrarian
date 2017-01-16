@@ -38,13 +38,18 @@ public class ServerUI extends JFrame {
 	Server server;
 	private JLabel lblNewLabel;
 	public static int imgNum=0;
-	
+	public static SubjectIDsGenerator subjectIDsGenerator;
+	public static BookIDsGenerator bookIDsGenerator;
 
 	/**
 	 * this class is used to show a window on the server<p>
 	 * it contains the main for the server
 	 */
 	public ServerUI() {
+		
+		subjectIDsGenerator= new SubjectIDsGenerator();
+		bookIDsGenerator= new BookIDsGenerator();
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 600, 500);
 		setTitle("Server");

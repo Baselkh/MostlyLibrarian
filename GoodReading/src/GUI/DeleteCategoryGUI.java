@@ -18,43 +18,19 @@ import javax.swing.JPanel;
  */
 public class DeleteCategoryGUI extends JFrame implements ActionListener {
 	
-	JTextField textField;
-	JButton confirmButton;
-	JButton cancelButton;
-	
 	public DeleteCategoryGUI() {
-		JFrame frame= new JFrame("Create Subject");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        Container pane= frame.getContentPane();
+		super("Create Subject");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Container pane= getContentPane();
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
         
-        textField= new JTextField("Subject's Name");
-        confirmButton= new JButton("Confirm");
-        cancelButton= new JButton("Cancel");
-        
-        confirmButton.addActionListener(this);
-        cancelButton.addActionListener(this);
-        
-        textField.setAlignmentX(Component.CENTER_ALIGNMENT);
-        confirmButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        cancelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        pane.add(textField);
-        pane.add(confirmButton);
-        pane.add(cancelButton);
-        
 //        Display the window
-        frame.pack();
-        frame.setVisible(true);
+        pack();
+        setVisible(true);
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource().equals(confirmButton)){
-			
-		}
-		else if(e.getSource().equals(cancelButton)){
-			
-		}
+		
 	}
 }

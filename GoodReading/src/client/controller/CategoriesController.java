@@ -1,8 +1,9 @@
 package client.controller;
-import client.entities.Category;
 import client.ui.Client;
+import protocol.request.AddSubjectToCategoryRequest;
 import protocol.request.GetAllCategoriesRequest;
 import protocol.request.SubjectsInCategoryRequest;
+import protocol.response.AddSubjectToCategoryResponse;
 import protocol.response.GetAllCategoriesResponse;
 import protocol.response.SubjectsInCategoryResponse;
 
@@ -24,6 +25,11 @@ public class CategoriesController extends AbstractController {
 	public GetAllCategoriesResponse GetAllCategories(){
 		GetAllCategoriesRequest message= new GetAllCategoriesRequest();
 		return (GetAllCategoriesResponse) client.sendMessage(message);
+	}
+	
+	public AddSubjectToCategoryResponse addSubjectToCategory(String categoryName, String subjectName){
+		AddSubjectToCategoryRequest message= new AddSubjectToCategoryRequest(categoryName, subjectName);
+		return (AddSubjectToCategoryResponse) client.sendMessage(message);
 	}
 }
 

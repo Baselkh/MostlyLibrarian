@@ -13,6 +13,7 @@ import client.entities.Purchases;
 import client.entities.User;
 import protocol.response.BooksInSubjectResponse;
 import protocol.response.SubjectsInCategoryResponse;
+import server.ui.ServerUI;
 
 public class DBConnector {
 	public Connection connDB;
@@ -365,4 +366,53 @@ public class DBConnector {
 			return false;
 		}
 	}
+	
+	public boolean addSubjectToCategory(String categoryName, String subjectName){
+		try {
+			String subjectID= ServerUI.subjectIDsGenerator.generateID();
+			
+			if(!subjectAlreadyInCategory(categoryName, subjectName))
+				return false;
+			
+			Statement st = connDB.createStatement();
+			st.executeUpdate("INSERT INTO subjects "
+					+ "VALUES('"+subjectID+"', '"+subjectName+"', '"+categoryName+"');"); 
+			
+			return true;
+		}
+		catch (SQLException ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
+	
+	private boolean subjectAlreadyInCategory(String categoryName, String subjectName){
+		try {
+			Statement st = connDB.createStatement();
+			ResultSet rs = st.
+					executeQuery("SELECT subjectID "
+							+ "FROM subjects "
+							+ "WHERE subjectName='"+subjectName+"' AND Category='"+categoryName+"'");
+			if(rs.next()){
+				rs.close();
+				return false;
+			}
+			return true;
+		}
+		catch (SQLException ex) {
+			ex.printStackTrace();
+			return false;
+		}	
+	}
+	
+//	public static void main(String[] args){
+//		DBConnector connector= new DBConnector();
+//		try {
+//			connector.connect("good_reading", "root", "Braude");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//		connector.addBooksToSubject("sad", "sad");
+//	}
 }

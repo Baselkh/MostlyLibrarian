@@ -7,7 +7,7 @@ import protocol.request.AddBooksToSubjectRequest;
 import protocol.response.AddBooksToSubjectResponse;
 import server.db.DBConnector;
 
-public class AddBooksToSubjectRequestHandler  extends AbstractRequestHandler {
+public class AddBooksToSubjectRequestHandler extends AbstractRequestHandler {
 
 	public AddBooksToSubjectRequestHandler(DBConnector dbCon) {
 		super(dbCon);

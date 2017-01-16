@@ -101,17 +101,8 @@ public class CategoriesGUI extends JFrame {
 				super.mouseClicked(e);
 				String categoryName= ((AbstractFolderElement)e.getSource()).getName();
 //				JOptionPane.showMessageDialog(null, categoryName+" is pressed");
-				CategoriesController controller= (CategoriesController) 
-						Controllers.getInstance().getController(ControllerType.CATEGORY_CONTROLLER);
-				SubjectsInCategoryResponse response= controller.getSubjectsInCategory(categoryName);
-				ArrayList<String> arr1= response.getSubjectsIDs();
-				ArrayList<String> arr2= response.getSubjectsNames();
-				if((arr1 != null) && (arr2 != null)){
-					new SubjectsInCategoryGUI(arr1, arr2, categoryName);
-				}
-				else{
-					JOptionPane.showMessageDialog(null, "ERROR!");
-				}
+
+				new SubjectsInCategoryGUI(categoryName);
 			}
 		};
 	}
