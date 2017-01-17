@@ -1,5 +1,4 @@
 package GUI;
-
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -14,70 +13,58 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
-import GUI.BooksInSubjectGUI.MyTableModel;
+import client.controller.CategoriesController;
 import client.controller.ControllerType;
 import client.controller.Controllers;
 import client.controller.SubjectsController;
-import client.entities.Book;
+import protocol.request.RemoveSubjectsFromCategoryRequest;
 import protocol.response.AddBooksToSubjectResponse;
-import protocol.response.GetBooksNotInSubjectResponse;
+import protocol.response.RemoveSubjectsFromCategoryResponse;
 
-public class BooksListGUI extends JFrame {
-
+/**
+ * @author Basel
+ *
+ */
+public class DeleteSubjectFromCategoruGUI extends JFrame{
+	
+	JTextField textField;
 	private JTable table;
 	private int numOfRows, numOfCols;
-	private String subjectID;
-	private String subjectName;
-	private JButton addButton;
+	private JButton confirmButton;
 	private JButton cancelButton;
-
-	public BooksListGUI(String subjectID, String subjectName){
-		super("Adding Books To Subject");
-		this.subjectID= subjectID;
-		this.subjectName= subjectName;
+	private String categoryName;
+	
+	public DeleteSubjectFromCategoruGUI(ArrayList<String> subjectsIDs, ArrayList<String> subjectsNames, String categoryName){
+		super("Removing Subjects From Category");
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.categoryName = categoryName;
 		Container pane= getContentPane();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 
-		SubjectsController controller= (SubjectsController) 
-				Controllers.getInstance().getController(ControllerType.SUBJECT_CONTROLLER);
-		GetBooksNotInSubjectResponse resp= controller.getBooksNotInSubject(subjectID);
-		ArrayList<Book> books= resp.getBooks();
-
-		addButton= new JButton("Add Books");
+		confirmButton= new JButton("Confirm");
 		cancelButton= new JButton("Cancel");
 		JPanel buttonsContainer= new JPanel(new FlowLayout());
-		buttonsContainer.add(addButton);
+		buttonsContainer.add(confirmButton);
 		buttonsContainer.add(cancelButton);
 		pane.add(buttonsContainer);
 
 		// Creating the table
-		numOfRows = books.size();
-		numOfCols = 9;
+		numOfRows = subjectsIDs.size();
+		numOfCols = 3;
 		Object[][] data = new Object[numOfRows][numOfCols];
 
 		int i = 0;
-		for(Book b: books){
+		for(String s : subjectsIDs){
 			int j = 0;
 			data[i][j] = new Boolean(false);
 			j++;
-			data[i][j] = b.getBookID();
+			data[i][j] = s;
 			j++;
-			data[i][j] = b.getTitle();
-			j++;
-			data[i][j] = b.getLanguage();
-			j++;
-			data[i][j] = b.getSummary();
-			j++;
-			data[i][j] = b.getTableOfContents();
-			j++;
-			data[i][j] = b.getDownloadsNumber();
-			j++;
-			data[i][j] = b.getKeywords();
-			j++;
-			data[i][j] = b.getAuthors();
+			data[i][j] = subjectsNames.get(i);
 			i++;
 		}
 
@@ -93,24 +80,19 @@ public class BooksListGUI extends JFrame {
 		//Add the scroll pane to this panel.
 		pane.add(scrollPane);
 
-		addButton.addActionListener(new AddButtonHandler());
-		cancelButton.addActionListener(new AddButtonHandler());
+		ButtonHandler handler = new ButtonHandler();
+		confirmButton.addActionListener(handler);
+		cancelButton.addActionListener(handler);
 
 		// Displaying
 		pack();
 		setVisible(true);
 	}
 
-	class MyTableModel extends AbstractTableModel {
+	private class MyTableModel extends AbstractTableModel {
 		String[] columnNames = {"",
-				"Book ID",
-				"Title", 
-				"Language", 
-				"Summary", 
-				"Table of Contents", 
-				"Downloads Number", 
-				"Keywords", 
-		"Authors"};
+				"Subject ID",
+				"Subject Name"};
 		private Object[][] data;
 
 		public MyTableModel(Object[][] data){
@@ -168,31 +150,40 @@ public class BooksListGUI extends JFrame {
 
 	}
 
-	private class AddButtonHandler implements ActionListener{
+	private class ButtonHandler implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource() == cancelButton)
 				dispose();
 			else{
-				ArrayList<String> booksIDs = new ArrayList<String>();
+				ArrayList<String> subjectsIDs = new ArrayList<String>();
 				for(int i = 0; i < numOfRows; i++)
 					if((Boolean)table.getValueAt(i, 0))
-						booksIDs.add((String)table.getValueAt(i, 1));
+						subjectsIDs.add((String)table.getValueAt(i, 1));
 
-				if(booksIDs.size() == 0)	// No book is selected to be removed
-					JOptionPane.showMessageDialog(null, "Please select books that you wish to add");
+				if(subjectsIDs.size() == 0)	// No book is selected to be removed
+					JOptionPane.showMessageDialog(null, "Please select books that you wish to remove");
 				else{	// One ore more books is selected
-					SubjectsController controller= (SubjectsController) 
-							Controllers.getInstance().getController(ControllerType.SUBJECT_CONTROLLER);
-					AddBooksToSubjectResponse resp= controller.addBooksToSubject(subjectID, booksIDs);
-					if(resp.operationIsSuccessful()){
-						new BooksInSubjectGUI(subjectID, subjectName);
+					CategoriesController controller= (CategoriesController) 
+							Controllers.getInstance().getController(ControllerType.CATEGORY_CONTROLLER);
+					RemoveSubjectsFromCategoryResponse resp= controller.removeSubjectsFromCategory(subjectsIDs, categoryName);
+					if(resp.getOperationStatus()){
+						new SubjectsInCategoryGUI(categoryName);
 						dispose();
 					}
-					else
+					else{
 						JOptionPane.showMessageDialog(null, "ERROR");
+						dispose();
+					}
 				}
 			}
 		}
 	}
+	
+	@Override
+	public void dispose() {
+		super.dispose();
+		SubjectsInCategoryGUI.reopen();
+	};
+	
 }

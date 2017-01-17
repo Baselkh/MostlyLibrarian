@@ -38,6 +38,7 @@ public class CreateSubjectGUI extends JFrame implements ActionListener {
 	
 	public CreateSubjectGUI(String categoryName) {
 		super("Create Subject");
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		if(currentInstance != null)
 			currentInstance.dispose();
 		currentInstance= this;
@@ -96,6 +97,12 @@ public class CreateSubjectGUI extends JFrame implements ActionListener {
 			dispose();
 		}
 	}
+	
+	@Override
+	public void dispose() {
+		super.dispose();
+		SubjectsInCategoryGUI.reopen();
+	};
 	
 //	public static void main(String[] args){
 //		new CreateSubjectGUI("Test");

@@ -404,6 +404,25 @@ public class DBConnector {
 			return false;
 		}	
 	}
+
+	public boolean removeSubjectsFromCategory(ArrayList<String> subjectsIDs, String categoryName) {
+		try {
+			Statement st = connDB.createStatement();
+//			for(String subjectID : subjectsIDs)
+//				st.executeUpdate("DELETE "
+//						+ "FROM books_in_subject "
+//						+ "WHERE SubjectID='"+subjectID+"';"); 
+			for(String subjectID : subjectsIDs)
+			st.executeUpdate("DELETE "
+					+ "FROM subjects "
+					+ "WHERE SubjectID='"+subjectID+"';");
+			return true;
+		}
+		catch (SQLException ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
 	
 //	public static void main(String[] args){
 //		DBConnector connector= new DBConnector();

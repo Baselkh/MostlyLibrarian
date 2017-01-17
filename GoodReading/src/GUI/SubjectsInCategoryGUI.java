@@ -38,10 +38,13 @@ public class SubjectsInCategoryGUI extends JFrame {
 	private BufferedImage folderIcon;
 	private MouseAdapter mouseClickListener;
 	private String categoryName;
+	private ArrayList<String> subjectsIDs;
+	private ArrayList<String> subjectsNames;
 	private static SubjectsInCategoryGUI currentInstance;
 	
 	public SubjectsInCategoryGUI(String categoryName){
 		super(categoryName);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		if(currentInstance != null)
 			currentInstance.dispose();
 		currentInstance= this;
@@ -64,15 +67,18 @@ public class SubjectsInCategoryGUI extends JFrame {
 		CategoriesController controller= (CategoriesController) 
 				Controllers.getInstance().getController(ControllerType.CATEGORY_CONTROLLER);
 		SubjectsInCategoryResponse response= controller.getSubjectsInCategory(categoryName);
-		ArrayList<String> subjectsIDs= response.getSubjectsIDs();
-		ArrayList<String> subjectsNames= response.getSubjectsNames();
+		subjectsIDs= response.getSubjectsIDs();
+		subjectsNames= response.getSubjectsNames();
 		
 		// Categories icons layout
 		JPanel iconsPanel= new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
 		try{	// Initializing the pointer to the icon
 			folderIcon= ImageIO.read(new File("images\\folder_icon.png"));
 		}
-		catch(IOException e){}	///////Messing Code/////////
+		catch(IOException e){
+			JOptionPane.showMessageDialog(null, "Something went wrong!!");
+			dispose();
+		}
 		createFolderClickListener();
 		for(int i= 0; i < subjectsIDs.size(); i++)
 			iconsPanel.add(makeFolderIcon(subjectsIDs.get(i), subjectsNames.get(i)));
@@ -103,6 +109,7 @@ public class SubjectsInCategoryGUI extends JFrame {
 				ArrayList<Book> books= resp.getBooks();
 				
 				new BooksInSubjectGUI(subject.getID(), subject.getName());
+				setVisible(false);
 			}
 		};
 	}
@@ -120,14 +127,26 @@ public class SubjectsInCategoryGUI extends JFrame {
 			if(e.getSource() == createSubjectButton){
 				setVisible(false);
 				new CreateSubjectGUI(categoryName);
+				setVisible(false);
 			}
 			else if(e.getSource() == deleteSubjectButton){
-				
+				new DeleteSubjectFromCategoruGUI(subjectsIDs, subjectsNames, categoryName);
 			}
 			else if(e.getSource() == renameSubjectButton){
 				
 			}
 		}
-		
 	}
+	
+	@Override
+	public void dispose() {
+		super.dispose();
+		CategoriesGUI.reopen();
+	};
+	
+	public static void reopen(){
+		if(currentInstance != null)
+			currentInstance.setVisible(true);
+	}
+	
 }

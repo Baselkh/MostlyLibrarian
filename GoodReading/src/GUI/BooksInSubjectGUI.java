@@ -43,6 +43,7 @@ public class BooksInSubjectGUI extends JFrame {
 	
 	public BooksInSubjectGUI(String subjectID, String subjectName){
 		super(subjectName);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		if(currentInstance != null)
 			currentInstance.dispose();
 		currentInstance= this;
@@ -185,7 +186,7 @@ public class BooksInSubjectGUI extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent a) {
 			if(a.getSource() == addBookButton){
-				new BooksListGUI(subjectID, subjectName);
+				new AddBooksToSubjectGUI(subjectID, subjectName);
 			}
 			else if(a.getSource() == removeBookButton){
 				ArrayList<String> booksIDs = new ArrayList<String>();
@@ -206,6 +207,12 @@ public class BooksInSubjectGUI extends JFrame {
 				}
 			}
 		}
-		
 	}
+	
+	@Override
+	public void dispose() {
+		super.dispose();
+		SubjectsInCategoryGUI.reopen();
+	};
+	
 }

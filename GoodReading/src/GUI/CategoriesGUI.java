@@ -42,11 +42,14 @@ public class CategoriesGUI extends JFrame {
 	private JButton renameCategoryButton;
 	private BufferedImage folderIcon;
 	private ArrayList<String> categoriesNames;
-	private ArrayList<String> categoriesIDs;
 	private MouseAdapter mouseClickListener;
+	private static CategoriesGUI currentInstance;
 	
 	public CategoriesGUI(){
 		super("Categories");
+		if(currentInstance != null)
+			currentInstance.dispose();
+		currentInstance= this;
 		Container pane= getContentPane();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 		
@@ -68,7 +71,10 @@ public class CategoriesGUI extends JFrame {
 		try{	// Initializing the pointer to the icon
 			folderIcon= ImageIO.read(new File("images\\folder_icon.png"));
 		}
-		catch(IOException e){}	///////Messing Code/////////
+		catch(IOException e){
+			JOptionPane.showMessageDialog(null, "Something went wrong!!");
+			dispose();
+		}
 		readCategoriesNames();	// Getting categories names
 		createFolderClickListener();
 		for(String s: categoriesNames){
@@ -100,11 +106,15 @@ public class CategoriesGUI extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				super.mouseClicked(e);
 				String categoryName= ((AbstractFolderElement)e.getSource()).getName();
-//				JOptionPane.showMessageDialog(null, categoryName+" is pressed");
-
 				new SubjectsInCategoryGUI(categoryName);
+				setVisible(false);
 			}
 		};
+	}
+	
+	public static void reopen(){
+		if(currentInstance != null)
+			currentInstance.setVisible(true);
 	}
 	
 	public static void main(String args[]){

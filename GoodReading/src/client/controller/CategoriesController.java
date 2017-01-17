@@ -1,10 +1,14 @@
 package client.controller;
+import java.util.ArrayList;
+
 import client.ui.Client;
 import protocol.request.AddSubjectToCategoryRequest;
 import protocol.request.GetAllCategoriesRequest;
+import protocol.request.RemoveSubjectsFromCategoryRequest;
 import protocol.request.SubjectsInCategoryRequest;
 import protocol.response.AddSubjectToCategoryResponse;
 import protocol.response.GetAllCategoriesResponse;
+import protocol.response.RemoveSubjectsFromCategoryResponse;
 import protocol.response.SubjectsInCategoryResponse;
 
 /**
@@ -31,5 +35,11 @@ public class CategoriesController extends AbstractController {
 		AddSubjectToCategoryRequest message= new AddSubjectToCategoryRequest(categoryName, subjectName);
 		return (AddSubjectToCategoryResponse) client.sendMessage(message);
 	}
+	
+	public RemoveSubjectsFromCategoryResponse removeSubjectsFromCategory(ArrayList<String> subjectsIDs, String categoryName){
+		RemoveSubjectsFromCategoryRequest message= new RemoveSubjectsFromCategoryRequest(subjectsIDs, categoryName);
+		return (RemoveSubjectsFromCategoryResponse) client.sendMessage(message);
+	}
+	
 }
 
