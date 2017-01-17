@@ -10,11 +10,11 @@ import messages.MessageType;
  * @author Basel
  *
  */
-public class GetAllBooksResponse implements Message {
+public class GetBooksNotInSubjectResponse implements Message {
 
 	private ArrayList<Book> books;
 	
-	public GetAllBooksResponse(ArrayList<Book> books){
+	public GetBooksNotInSubjectResponse(ArrayList<Book> books){
 		this.books= books;
 	}
 	
@@ -23,6 +23,6 @@ public class GetAllBooksResponse implements Message {
 	}
 	
 	public MessageType getMessageType() {
-		return MessageType.GET_ALL_BOOKS_RESPONSE;
+		return MessageType.GET_BOOKS_NOT_IN_SUBJECT_RESPONSE;
 	}
 }

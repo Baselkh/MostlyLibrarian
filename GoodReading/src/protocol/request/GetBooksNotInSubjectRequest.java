@@ -7,11 +7,11 @@ import messages.MessageType;
  * @author Basel
  *
  */
-public class GetAllBooksRequest implements Message {
+public class GetBooksNotInSubjectRequest implements Message {
 
 	private String subjectID;
 	
-	public GetAllBooksRequest(String subjectID){
+	public GetBooksNotInSubjectRequest(String subjectID){
 		this.subjectID= subjectID;
 	}
 	
@@ -20,6 +20,6 @@ public class GetAllBooksRequest implements Message {
 	}
 	
 	public MessageType getMessageType() {
-		return MessageType.GET_ALL_BOOKS_REQUEST;
+		return MessageType.GET_BOOKS_NOT_IN_SUBJECT_REQUEST;
 	}
 }

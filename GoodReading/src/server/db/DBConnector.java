@@ -86,20 +86,20 @@ public class DBConnector {
 	 * @throws SQLException
 	 */
 	public boolean isLoggedIn(User user) throws SQLException {
-		try {
-			Statement Stmt = connDB.createStatement();
-			ResultSet rs = Stmt.executeQuery("SELECT * FROM users WHERE username="
-					+ "'"
-					+ user.getUserName() + "'"+ " AND Status=1");
-			if (!(rs.next())) return false;
-			
-			rs.close();
-			return true;
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-			return false;
-		}
-
+//		try {
+//			Statement Stmt = connDB.createStatement();
+//			ResultSet rs = Stmt.executeQuery("SELECT * FROM users WHERE username="
+//					+ "'"
+//					+ user.getUserName() + "'"+ " AND Status=1");
+//			if (!(rs.next())) return false;
+//			
+//			rs.close();
+//			return true;
+//		} catch (SQLException ex) {
+//			ex.printStackTrace();
+//			return false;
+//		}
+		return false;
 	}
 
 	/**
@@ -320,7 +320,7 @@ public class DBConnector {
 		}
 	}
 	
-	public ArrayList<Book> getAllBooks(String subjectID){
+	public ArrayList<Book> getBooksNotInSubject(String subjectID){
 		try {
 			Statement st = connDB.createStatement();
 			ResultSet rs = st

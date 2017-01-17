@@ -1,6 +1,7 @@
 package GUI;
 
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +12,12 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
 
 import client.controller.ControllerType;
 import client.controller.Controllers;
@@ -25,11 +32,12 @@ import protocol.response.RemoveBooksFromSubjectResponse;
  */
 public class BooksInSubjectGUI extends JFrame {
 
+	private JTable table;
+	private int numOfRows, numOfCols;
 	private String subjectName;
 	private String subjectID;
 	private JButton addBookButton;
 	private JButton removeBookButton;
-	private ArrayList<BooksInSubjectElementGUI> booksGUIElements;
 	private ArrayList<Book> books;
 	private static BooksInSubjectGUI currentInstance;
 	
@@ -56,15 +64,45 @@ public class BooksInSubjectGUI extends JFrame {
 		buttonsContainer.add(removeBookButton);
 		pane.add(buttonsContainer);
 		
-		Book columnesNames= new Book("Book ID", "Title", "Language", "Summary", "Table of Contents", "Downloads Number", "Keywords", "Authors");
-		pane.add(new BooksInSubjectElementGUI(columnesNames, false));
+		// Creating the table
+		numOfRows = books.size();
+		numOfCols = 9;
+		Object[][] data = new Object[numOfRows][numOfCols];
 		
-		booksGUIElements= new ArrayList<BooksInSubjectElementGUI>();
+		int i = 0;
 		for(Book b: books){
-			BooksInSubjectElementGUI bookGUIElement= new BooksInSubjectElementGUI(b, true);
-			pane.add(bookGUIElement);
-			booksGUIElements.add(bookGUIElement);
+			int j = 0;
+			data[i][j] = new Boolean(false);
+			j++;
+			data[i][j] = b.getBookID();
+			j++;
+			data[i][j] = b.getTitle();
+			j++;
+			data[i][j] = b.getLanguage();
+			j++;
+			data[i][j] = b.getSummary();
+			j++;
+			data[i][j] = b.getTableOfContents();
+			j++;
+			data[i][j] = b.getDownloadsNumber();
+			j++;
+			data[i][j] = b.getKeywords();
+			j++;
+			data[i][j] = b.getAuthors();
+			i++;
 		}
+		
+		table = new JTable(new MyTableModel(data));
+		table.setPreferredScrollableViewportSize(new Dimension(500, 300));
+        table.setFillsViewportHeight(true);
+        table.setSelectionMode(
+                ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        
+		//Create the scroll pane and add the table to it.
+        JScrollPane scrollPane = new JScrollPane(table);
+
+        //Add the scroll pane to this panel.
+        pane.add(scrollPane);
 		
 		// Setting up buttons listeners
 		ClickHandler handler= new ClickHandler();
@@ -76,6 +114,73 @@ public class BooksInSubjectGUI extends JFrame {
 		setVisible(true);
 	}
 	
+	class MyTableModel extends AbstractTableModel {
+		String[] columnNames = {"",
+				"Book ID",
+				"Title", 
+				"Language", 
+				"Summary", 
+				"Table of Contents", 
+				"Downloads Number", 
+				"Keywords", 
+				"Authors"};
+        private Object[][] data;
+        
+        public MyTableModel(Object[][] data){
+        	this.data= data;
+        }
+
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        public int getRowCount() {
+            return data.length;
+        }
+
+        public String getColumnName(int col) {
+            return columnNames[col];
+        }
+
+        public Object getValueAt(int row, int col) {
+            return data[row][col];
+        }
+
+        /*
+         * JTable uses this method to determine the default renderer/
+         * editor for each cell.  If we didn't implement this method,
+         * then the last column would contain text ("true"/"false"),
+         * rather than a check box.
+         */
+        public Class getColumnClass(int c) {
+            return getValueAt(0, c).getClass();
+        }
+
+        /*
+         * Don't need to implement this method unless your table's
+         * editable.
+         */
+        public boolean isCellEditable(int row, int col) {
+            //Note that the data/cell address is constant,
+            //no matter where the cell appears onscreen.
+            if (col == 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        /*
+         * Don't need to implement this method unless your table's
+         * data can change.
+         */
+        public void setValueAt(Object value, int row, int col) {
+            data[row][col] = value;
+            fireTableCellUpdated(row, col);
+        }
+
+    }
+	
 	private class ClickHandler implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent a) {
@@ -83,16 +188,14 @@ public class BooksInSubjectGUI extends JFrame {
 				new BooksListGUI(subjectID, subjectName);
 			}
 			else if(a.getSource() == removeBookButton){
-				ArrayList<BooksInSubjectElementGUI> arr= new ArrayList<BooksInSubjectElementGUI>();
-				for(BooksInSubjectElementGUI elem: booksGUIElements)
-					if(elem.isSelected())
-						arr.add(elem);
-				if(arr.size() == 0)	// No book is selected to be removed
+				ArrayList<String> booksIDs = new ArrayList<String>();
+				for(int i = 0; i < numOfRows; i++)
+					if((Boolean)table.getValueAt(i, 0))
+						booksIDs.add((String)table.getValueAt(i, 1));
+				
+				if(booksIDs.size() == 0)	// No book is selected to be removed
 					JOptionPane.showMessageDialog(null, "Please select books that you wish to remove");
 				else{	// One ore more books is selected
-					ArrayList<String> booksIDs= new ArrayList<String>();
-					for(BooksInSubjectElementGUI elem: arr)
-						booksIDs.add(elem.getID());
 					SubjectsController controller= (SubjectsController) 
 							Controllers.getInstance().getController(ControllerType.SUBJECT_CONTROLLER);
 					RemoveBooksFromSubjectResponse resp= controller.removeBooksFromSubject(booksIDs);

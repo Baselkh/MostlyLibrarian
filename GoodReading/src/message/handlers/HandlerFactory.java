@@ -37,8 +37,8 @@ public class HandlerFactory {
 			return new BooksInSubjectHandler(dbCon);
 		case REMOVE_BOOKS_REQUEST:
 			return new RemoveBooksFromSubjectRequestHandler(dbCon);
-		case GET_ALL_BOOKS_REQUEST:
-			return new GetAllBooksRequestHandler(dbCon);
+		case GET_BOOKS_NOT_IN_SUBJECT_REQUEST:
+			return new GetBooksNotInSubjectRequestHandler(dbCon);
 		case ADD_BOOKS_TO_SUBJECT_REQUEST:
 			return new AddBooksToSubjectRequestHandler(dbCon);
 		case ADD_SUBJECT_TO_CATEGORY_REQUEST:
