@@ -408,14 +408,24 @@ public class DBConnector {
 	public boolean removeSubjectsFromCategory(ArrayList<String> subjectsIDs, String categoryName) {
 		try {
 			Statement st = connDB.createStatement();
-//			for(String subjectID : subjectsIDs)
-//				st.executeUpdate("DELETE "
-//						+ "FROM books_in_subject "
-//						+ "WHERE SubjectID='"+subjectID+"';"); 
 			for(String subjectID : subjectsIDs)
 			st.executeUpdate("DELETE "
 					+ "FROM subjects "
 					+ "WHERE SubjectID='"+subjectID+"';");
+			return true;
+		}
+		catch (SQLException ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean renameSubject(String subjectID, String newSubjectName){
+		try {
+			Statement st = connDB.createStatement();
+			st.executeUpdate("UPDATE subjects "
+					+ "SET SubjectName='"+newSubjectName+"' "
+					+ "WHERE SubjectID='"+subjectID+"';"); 
 			return true;
 		}
 		catch (SQLException ex) {

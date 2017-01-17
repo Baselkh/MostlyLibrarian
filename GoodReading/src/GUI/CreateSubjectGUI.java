@@ -28,56 +28,64 @@ import protocol.response.SubjectsInCategoryResponse;
  * @author Basel
  *
  */
-public class CreateSubjectGUI extends JFrame implements ActionListener {
-	
+public class CreateSubjectGUI extends AbstractQueueableWindow implements ActionListener {
+
 	private String categoryName;
-	JTextField textField;
-	JButton confirmButton;
-	JButton cancelButton;
-	private static CreateSubjectGUI currentInstance;
-	
+	private JTextField textField;
+	private JButton confirmButton;
+	private JButton cancelButton;
+
 	public CreateSubjectGUI(String categoryName) {
 		super("Create Subject");
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		if(currentInstance != null)
-			currentInstance.dispose();
-		currentInstance= this;
+
 		this.categoryName= categoryName;
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        Container pane= getContentPane();
-        pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
-        pane.setMinimumSize(new Dimension(500, 80));
-        
-        textField= new JTextField();
-        textField.setPreferredSize(new Dimension(400, 30));
-        JPanel textFieldWrapper= new JPanel(new FlowLayout());
-        textFieldWrapper.add(textField);
-        textFieldWrapper.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        pane.add(textFieldWrapper);
-        
-        pane.add(Box.createRigidArea(new Dimension(1, 10)));
-        
-        confirmButton= new JButton("Confirm");
-        pane.add(confirmButton);
-        confirmButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        pane.add(Box.createRigidArea(new Dimension(1, 10)));
-        
-        cancelButton= new JButton("Cancel");
-        pane.add(cancelButton);
-        cancelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        pane.add(Box.createRigidArea(new Dimension(1, 10)));
-        
-        confirmButton.addActionListener(this);
-        cancelButton.addActionListener(this);
-        
-//        Display the window
-        pack();
-        setVisible(true);
+
+		Container pane= getContentPane();
+		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+		pane.setMinimumSize(new Dimension(500, 80));
+
+		textField= new JTextField();
+		textField.setPreferredSize(new Dimension(400, 30));
+		JPanel textFieldWrapper= new JPanel(new FlowLayout());
+		textFieldWrapper.add(textField);
+		textFieldWrapper.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		pane.add(textFieldWrapper);
+
+		pane.add(Box.createRigidArea(new Dimension(1, 10)));
+
+		confirmButton= new JButton("Confirm");
+		pane.add(confirmButton);
+		confirmButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		pane.add(Box.createRigidArea(new Dimension(1, 10)));
+
+		cancelButton= new JButton("Cancel");
+		pane.add(cancelButton);
+		cancelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		pane.add(Box.createRigidArea(new Dimension(1, 10)));
+
+		confirmButton.addActionListener(this);
+		cancelButton.addActionListener(this);
+
+		// Back button
+		pane.add(Box.createRigidArea(new Dimension(1, 40)));
+		JButton backButton = new JButton("Go Back");
+		backButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				WindowsViewManager.removeFromQueue();
+			}
+		});
+		pane.add(backButton);
+		backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		pane.add(Box.createRigidArea(new Dimension(1, 80)));
+
+		//        Display the window
+		pack();
+		setVisible(true);
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource().equals(confirmButton)){
@@ -86,25 +94,15 @@ public class CreateSubjectGUI extends JFrame implements ActionListener {
 			AddSubjectToCategoryResponse resp= controller.
 					addSubjectToCategory(categoryName, textField.getText());
 			if(resp.operationIsSuccessful()){
-				JOptionPane.showMessageDialog(null, "Done!");
 				new SubjectsInCategoryGUI(categoryName);
-				dispose();
 			}
-			else
+			else{
 				JOptionPane.showMessageDialog(null, "ERROR");
+				removeFromQueue();
+			}
 		}
 		else if(e.getSource().equals(cancelButton)){
-			dispose();
+			removeFromQueue();
 		}
 	}
-	
-	@Override
-	public void dispose() {
-		super.dispose();
-		SubjectsInCategoryGUI.reopen();
-	};
-	
-//	public static void main(String[] args){
-//		new CreateSubjectGUI("Test");
-//	}
 }

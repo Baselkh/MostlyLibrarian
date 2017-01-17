@@ -1,5 +1,6 @@
 package GUI;
 
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -7,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -30,7 +32,7 @@ import protocol.response.RemoveBooksFromSubjectResponse;
  * @author Basel
  *
  */
-public class BooksInSubjectGUI extends JFrame {
+public class BooksInSubjectGUI extends AbstractQueueableWindow {
 
 	private JTable table;
 	private int numOfRows, numOfCols;
@@ -39,24 +41,21 @@ public class BooksInSubjectGUI extends JFrame {
 	private JButton addBookButton;
 	private JButton removeBookButton;
 	private ArrayList<Book> books;
-	private static BooksInSubjectGUI currentInstance;
-	
+
 	public BooksInSubjectGUI(String subjectID, String subjectName){
 		super(subjectName);
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		if(currentInstance != null)
-			currentInstance.dispose();
-		currentInstance= this;
+
 		this.subjectID= subjectID;
 		this.subjectName= subjectName;
+
 		Container pane= getContentPane();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
-		
+
 		SubjectsController controller= (SubjectsController) 
 				Controllers.getInstance().getController(ControllerType.SUBJECT_CONTROLLER);
 		BooksInSubjectResponse resp= controller.getBooksInSubject(subjectID);
 		books= resp.getBooks();
-		
+
 		// Initializing up buttons
 		addBookButton= new JButton("Add Book");
 		removeBookButton= new JButton("Remove Book");
@@ -64,12 +63,12 @@ public class BooksInSubjectGUI extends JFrame {
 		buttonsContainer.add(addBookButton);
 		buttonsContainer.add(removeBookButton);
 		pane.add(buttonsContainer);
-		
+
 		// Creating the table
 		numOfRows = books.size();
 		numOfCols = 9;
 		Object[][] data = new Object[numOfRows][numOfCols];
-		
+
 		int i = 0;
 		for(Book b: books){
 			int j = 0;
@@ -92,29 +91,42 @@ public class BooksInSubjectGUI extends JFrame {
 			data[i][j] = b.getAuthors();
 			i++;
 		}
-		
+
 		table = new JTable(new MyTableModel(data));
 		table.setPreferredScrollableViewportSize(new Dimension(500, 300));
-        table.setFillsViewportHeight(true);
-        table.setSelectionMode(
-                ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        
-		//Create the scroll pane and add the table to it.
-        JScrollPane scrollPane = new JScrollPane(table);
+		table.setFillsViewportHeight(true);
+		table.setSelectionMode(
+				ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 
-        //Add the scroll pane to this panel.
-        pane.add(scrollPane);
-		
+		//Create the scroll pane and add the table to it.
+		JScrollPane scrollPane = new JScrollPane(table);
+
+		//Add the scroll pane to this panel.
+		pane.add(scrollPane);
+
 		// Setting up buttons listeners
 		ClickHandler handler= new ClickHandler();
 		addBookButton.addActionListener(handler);
 		removeBookButton.addActionListener(handler);
-		
+
+		// Back button
+		pane.add(Box.createRigidArea(new Dimension(1, 40)));
+		JButton backButton = new JButton("Go Back");
+		backButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				WindowsViewManager.removeFromQueue();
+			}
+		});
+		pane.add(backButton);
+		backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		pane.add(Box.createRigidArea(new Dimension(1, 80)));		
+
 		// Displaying
 		pack();
 		setVisible(true);
 	}
-	
+
 	class MyTableModel extends AbstractTableModel {
 		String[] columnNames = {"",
 				"Book ID",
@@ -124,64 +136,64 @@ public class BooksInSubjectGUI extends JFrame {
 				"Table of Contents", 
 				"Downloads Number", 
 				"Keywords", 
-				"Authors"};
-        private Object[][] data;
-        
-        public MyTableModel(Object[][] data){
-        	this.data= data;
-        }
+		"Authors"};
+		private Object[][] data;
 
-        public int getColumnCount() {
-            return columnNames.length;
-        }
+		public MyTableModel(Object[][] data){
+			this.data= data;
+		}
 
-        public int getRowCount() {
-            return data.length;
-        }
+		public int getColumnCount() {
+			return columnNames.length;
+		}
 
-        public String getColumnName(int col) {
-            return columnNames[col];
-        }
+		public int getRowCount() {
+			return data.length;
+		}
 
-        public Object getValueAt(int row, int col) {
-            return data[row][col];
-        }
+		public String getColumnName(int col) {
+			return columnNames[col];
+		}
 
-        /*
-         * JTable uses this method to determine the default renderer/
-         * editor for each cell.  If we didn't implement this method,
-         * then the last column would contain text ("true"/"false"),
-         * rather than a check box.
-         */
-        public Class getColumnClass(int c) {
-            return getValueAt(0, c).getClass();
-        }
+		public Object getValueAt(int row, int col) {
+			return data[row][col];
+		}
 
-        /*
-         * Don't need to implement this method unless your table's
-         * editable.
-         */
-        public boolean isCellEditable(int row, int col) {
-            //Note that the data/cell address is constant,
-            //no matter where the cell appears onscreen.
-            if (col == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        }
+		/*
+		 * JTable uses this method to determine the default renderer/
+		 * editor for each cell.  If we didn't implement this method,
+		 * then the last column would contain text ("true"/"false"),
+		 * rather than a check box.
+		 */
+		public Class getColumnClass(int c) {
+			return getValueAt(0, c).getClass();
+		}
 
-        /*
-         * Don't need to implement this method unless your table's
-         * data can change.
-         */
-        public void setValueAt(Object value, int row, int col) {
-            data[row][col] = value;
-            fireTableCellUpdated(row, col);
-        }
+		/*
+		 * Don't need to implement this method unless your table's
+		 * editable.
+		 */
+		public boolean isCellEditable(int row, int col) {
+			//Note that the data/cell address is constant,
+			//no matter where the cell appears onscreen.
+			if (col == 0) {
+				return true;
+			} else {
+				return false;
+			}
+		}
 
-    }
-	
+		/*
+		 * Don't need to implement this method unless your table's
+		 * data can change.
+		 */
+		public void setValueAt(Object value, int row, int col) {
+			data[row][col] = value;
+			fireTableCellUpdated(row, col);
+		}
+
+	}
+
 	private class ClickHandler implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent a) {
@@ -193,26 +205,23 @@ public class BooksInSubjectGUI extends JFrame {
 				for(int i = 0; i < numOfRows; i++)
 					if((Boolean)table.getValueAt(i, 0))
 						booksIDs.add((String)table.getValueAt(i, 1));
-				
+
 				if(booksIDs.size() == 0)	// No book is selected to be removed
 					JOptionPane.showMessageDialog(null, "Please select books that you wish to remove");
 				else{	// One ore more books is selected
 					SubjectsController controller= (SubjectsController) 
 							Controllers.getInstance().getController(ControllerType.SUBJECT_CONTROLLER);
 					RemoveBooksFromSubjectResponse resp= controller.removeBooksFromSubject(booksIDs);
-					if(resp.getOperationStatus())
+					if(resp.getOperationStatus()){
+						WindowsViewManager.removeFromQueue();
 						new BooksInSubjectGUI(subjectID, subjectName);
-					else
+					}
+					else{
 						JOptionPane.showMessageDialog(null, "ERROR");
+						removeFromQueue();
+					}
 				}
 			}
 		}
 	}
-	
-	@Override
-	public void dispose() {
-		super.dispose();
-		SubjectsInCategoryGUI.reopen();
-	};
-	
 }

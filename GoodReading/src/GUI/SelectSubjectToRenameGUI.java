@@ -1,5 +1,4 @@
 package GUI;
-
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -21,36 +20,22 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
-import GUI.BooksInSubjectGUI.MyTableModel;
-import client.controller.ControllerType;
-import client.controller.Controllers;
-import client.controller.SubjectsController;
-import client.entities.Book;
-import protocol.response.AddBooksToSubjectResponse;
-import protocol.response.GetBooksNotInSubjectResponse;
-
-public class AddBooksToSubjectGUI extends AbstractQueueableWindow {
+/**
+ * @author Basel
+ *
+ */
+public class SelectSubjectToRenameGUI extends AbstractQueueableWindow {
 
 	private JTable table;
 	private int numOfRows, numOfCols;
-	private String subjectID;
-	private String subjectName;
 	private JButton confirmButton;
 	private JButton cancelButton;
 
-	public AddBooksToSubjectGUI(String subjectID, String subjectName){
-		super("Adding Books To Subject");
-
-		this.subjectID= subjectID;
-		this.subjectName= subjectName;
+	public SelectSubjectToRenameGUI(ArrayList<String> subjectsIDs, ArrayList<String> subjectsNames){
+		super("Choose A Subject To Rename");
 
 		Container pane= getContentPane();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
-
-		SubjectsController controller= (SubjectsController) 
-				Controllers.getInstance().getController(ControllerType.SUBJECT_CONTROLLER);
-		GetBooksNotInSubjectResponse resp= controller.getBooksNotInSubject(subjectID);
-		ArrayList<Book> books= resp.getBooks();
 
 		confirmButton= new JButton("Confirm");
 		cancelButton= new JButton("Cancel");
@@ -60,30 +45,18 @@ public class AddBooksToSubjectGUI extends AbstractQueueableWindow {
 		pane.add(buttonsContainer);
 
 		// Creating the table
-		numOfRows = books.size();
-		numOfCols = 9;
+		numOfRows = subjectsIDs.size();
+		numOfCols = 3;
 		Object[][] data = new Object[numOfRows][numOfCols];
 
 		int i = 0;
-		for(Book b: books){
+		for(String s : subjectsIDs){
 			int j = 0;
 			data[i][j] = new Boolean(false);
 			j++;
-			data[i][j] = b.getBookID();
+			data[i][j] = s;
 			j++;
-			data[i][j] = b.getTitle();
-			j++;
-			data[i][j] = b.getLanguage();
-			j++;
-			data[i][j] = b.getSummary();
-			j++;
-			data[i][j] = b.getTableOfContents();
-			j++;
-			data[i][j] = b.getDownloadsNumber();
-			j++;
-			data[i][j] = b.getKeywords();
-			j++;
-			data[i][j] = b.getAuthors();
+			data[i][j] = subjectsNames.get(i);
 			i++;
 		}
 
@@ -91,7 +64,7 @@ public class AddBooksToSubjectGUI extends AbstractQueueableWindow {
 		table.setPreferredScrollableViewportSize(new Dimension(500, 300));
 		table.setFillsViewportHeight(true);
 		table.setSelectionMode(
-				ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+				ListSelectionModel.SINGLE_SELECTION);
 
 		//Create the scroll pane and add the table to it.
 		JScrollPane scrollPane = new JScrollPane(table);
@@ -99,8 +72,9 @@ public class AddBooksToSubjectGUI extends AbstractQueueableWindow {
 		//Add the scroll pane to this panel.
 		pane.add(scrollPane);
 
-		confirmButton.addActionListener(new AddButtonHandler());
-		cancelButton.addActionListener(new AddButtonHandler());
+		ButtonHandler handler = new ButtonHandler();
+		confirmButton.addActionListener(handler);
+		cancelButton.addActionListener(handler);
 
 		// Back button
 		pane.add(Box.createRigidArea(new Dimension(1, 40)));
@@ -122,14 +96,8 @@ public class AddBooksToSubjectGUI extends AbstractQueueableWindow {
 
 	private class MyTableModel extends AbstractTableModel {
 		String[] columnNames = {"",
-				"Book ID",
-				"Title", 
-				"Language", 
-				"Summary", 
-				"Table of Contents", 
-				"Downloads Number", 
-				"Keywords", 
-		"Authors"};
+				"Subject ID",
+		"Subject Name"};
 		private Object[][] data;
 
 		public MyTableModel(Object[][] data){
@@ -187,33 +155,21 @@ public class AddBooksToSubjectGUI extends AbstractQueueableWindow {
 
 	}
 
-	private class AddButtonHandler implements ActionListener{
+	private class ButtonHandler implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource() == cancelButton)
 				removeFromQueue();
 			else{
-				ArrayList<String> booksIDs = new ArrayList<String>();
-				for(int i = 0; i < numOfRows; i++)
+				int i;
+				for(i = 0; i < numOfRows; i++)
 					if((Boolean)table.getValueAt(i, 0))
-						booksIDs.add((String)table.getValueAt(i, 1));
+						break;
 
-				if(booksIDs.size() == 0)	// No book is selected to be removed
-					JOptionPane.showMessageDialog(null, "Please select books that you wish to add");
+				if(i == numOfRows)	// No subject is selected to be renamed
+					JOptionPane.showMessageDialog(null, "Please select the subject that you wish rename");
 				else{	// One ore more books is selected
-					SubjectsController controller= (SubjectsController) 
-							Controllers.getInstance().getController(ControllerType.SUBJECT_CONTROLLER);
-					AddBooksToSubjectResponse resp= controller.addBooksToSubject(subjectID, booksIDs);
-
-					if(resp.operationIsSuccessful()){	// Removing was successful
-						for(int i = 0; i < 2; i++)
-							WindowsViewManager.removeFromQueue();
-						new BooksInSubjectGUI(subjectID, subjectName);
-					}
-					else{
-						JOptionPane.showMessageDialog(null, "ERROR");
-						removeFromQueue();
-					}
+					new RenameSubjectGUI((String)table.getValueAt(i, 1), (String)table.getValueAt(i, 2));
 				}
 			}
 		}

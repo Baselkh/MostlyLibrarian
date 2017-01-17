@@ -5,10 +5,12 @@ import client.ui.Client;
 import protocol.request.AddSubjectToCategoryRequest;
 import protocol.request.GetAllCategoriesRequest;
 import protocol.request.RemoveSubjectsFromCategoryRequest;
+import protocol.request.RenameSubjectRequest;
 import protocol.request.SubjectsInCategoryRequest;
 import protocol.response.AddSubjectToCategoryResponse;
 import protocol.response.GetAllCategoriesResponse;
 import protocol.response.RemoveSubjectsFromCategoryResponse;
+import protocol.response.RenameSubjectResponse;
 import protocol.response.SubjectsInCategoryResponse;
 
 /**
@@ -41,5 +43,9 @@ public class CategoriesController extends AbstractController {
 		return (RemoveSubjectsFromCategoryResponse) client.sendMessage(message);
 	}
 	
+	public RenameSubjectResponse renameSubject(String subjectID, String newSubjectName){
+		RenameSubjectRequest message = new RenameSubjectRequest(subjectID, newSubjectName);
+		return (RenameSubjectResponse) client.sendMessage(message);
+	}
 }
 

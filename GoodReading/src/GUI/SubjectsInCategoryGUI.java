@@ -1,6 +1,8 @@
 package GUI;
 
+import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -30,7 +33,7 @@ import protocol.response.SubjectsInCategoryResponse;
  * @author Basel
  *
  */
-public class SubjectsInCategoryGUI extends JFrame {
+public class SubjectsInCategoryGUI extends AbstractQueueableWindow {
 
 	private JButton createSubjectButton;
 	private JButton deleteSubjectButton;
@@ -40,15 +43,10 @@ public class SubjectsInCategoryGUI extends JFrame {
 	private String categoryName;
 	private ArrayList<String> subjectsIDs;
 	private ArrayList<String> subjectsNames;
-	private static SubjectsInCategoryGUI currentInstance;
 	
 	public SubjectsInCategoryGUI(String categoryName){
 		super(categoryName);
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		if(currentInstance != null)
-			currentInstance.dispose();
-		currentInstance= this;
-		this.categoryName= categoryName;
+		
 		Container pane= getContentPane();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 		
@@ -90,6 +88,19 @@ public class SubjectsInCategoryGUI extends JFrame {
 		deleteSubjectButton.addActionListener(clickListener);
 		renameSubjectButton.addActionListener(clickListener);
 		
+		// Back button
+		pane.add(Box.createRigidArea(new Dimension(1, 40)));
+		JButton backButton = new JButton("Go Back");
+		backButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				WindowsViewManager.removeFromQueue();
+			}
+		});
+		pane.add(backButton);
+		backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		pane.add(Box.createRigidArea(new Dimension(1, 80)));
+		
 		// Displaying
 		pack();
 		setVisible(true);
@@ -124,29 +135,14 @@ public class SubjectsInCategoryGUI extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(e.getSource() == createSubjectButton){
-				setVisible(false);
+			if(e.getSource() == createSubjectButton)
 				new CreateSubjectGUI(categoryName);
-				setVisible(false);
-			}
-			else if(e.getSource() == deleteSubjectButton){
+			
+			else if(e.getSource() == deleteSubjectButton)
 				new DeleteSubjectFromCategoruGUI(subjectsIDs, subjectsNames, categoryName);
-			}
-			else if(e.getSource() == renameSubjectButton){
-				
-			}
+			
+			else if(e.getSource() == renameSubjectButton)
+				new SelectSubjectToRenameGUI(subjectsIDs, subjectsNames);
 		}
 	}
-	
-	@Override
-	public void dispose() {
-		super.dispose();
-		CategoriesGUI.reopen();
-	};
-	
-	public static void reopen(){
-		if(currentInstance != null)
-			currentInstance.setVisible(true);
-	}
-	
 }

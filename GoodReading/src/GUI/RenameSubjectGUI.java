@@ -1,60 +1,109 @@
 package GUI;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JFrame;
-import javax.swing.BoxLayout;
-import javax.swing.JTextField;
-import javax.swing.JButton;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
-import javax.swing.JPanel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-/**
- * @author Basel
- *
- */
-public class RenameSubjectGUI extends JFrame implements ActionListener {
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import client.controller.CategoriesController;
+import client.controller.ControllerType;
+import client.controller.Controllers;
+import protocol.request.RenameSubjectRequest;
+import protocol.response.AddSubjectToCategoryResponse;
+import protocol.response.RenameSubjectResponse;
+
+public class RenameSubjectGUI extends AbstractQueueableWindow implements ActionListener  {
+
+	private JTextField textField;
+	private JLabel oldName;
+	private JButton confirmButton;
+	private JButton cancelButton;
+	private String subjectID;
 	
-	JTextField textField;
-	JButton confirmButton;
-	JButton cancelButton;
-	
-	public RenameSubjectGUI() {
-		JFrame frame= new JFrame("Create Subject");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        Container pane= frame.getContentPane();
+	public RenameSubjectGUI(String subjectID, String oldSubjectName) {
+		super("Rename Subject");
+		
+        this.subjectID = subjectID;
+		
+        Container pane= getContentPane();
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+        pane.setMinimumSize(new Dimension(500, 80));
         
-        textField= new JTextField("Subject's Name");
+        oldName= new JLabel(oldSubjectName);
+        oldName.setPreferredSize(new Dimension(400, 30));
+        JPanel oldNameWrapper= new JPanel(new FlowLayout());
+        oldNameWrapper.add(oldName);
+        oldNameWrapper.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        pane.add(oldNameWrapper);
+        
+        textField= new JTextField();
+        textField.setPreferredSize(new Dimension(400, 30));
+        JPanel textFieldWrapper= new JPanel(new FlowLayout());
+        textFieldWrapper.add(textField);
+        textFieldWrapper.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        pane.add(textFieldWrapper);
+        
+        pane.add(Box.createRigidArea(new Dimension(1, 10)));
+        
         confirmButton= new JButton("Confirm");
+        pane.add(confirmButton);
+        confirmButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        pane.add(Box.createRigidArea(new Dimension(1, 10)));
+        
         cancelButton= new JButton("Cancel");
+        pane.add(cancelButton);
+        cancelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        pane.add(Box.createRigidArea(new Dimension(1, 10)));
         
         confirmButton.addActionListener(this);
         cancelButton.addActionListener(this);
         
-        textField.setAlignmentX(Component.CENTER_ALIGNMENT);
-        confirmButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        cancelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        pane.add(textField);
-        pane.add(confirmButton);
-        pane.add(cancelButton);
+        // Back button
+        pane.add(Box.createRigidArea(new Dimension(1, 40)));
+        JButton backButton = new JButton("Go Back");
+        backButton.addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		WindowsViewManager.removeFromQueue();
+        	}
+        });
+        pane.add(backButton);
+        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        pane.add(Box.createRigidArea(new Dimension(1, 80)));
         
 //        Display the window
-        frame.pack();
-        frame.setVisible(true);
+        pack();
+        setVisible(true);
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource().equals(confirmButton)){
+			CategoriesController controller= (CategoriesController) 
+					Controllers.getInstance().getController(ControllerType.CATEGORY_CONTROLLER);
+			RenameSubjectResponse resp= controller.
+					renameSubject(subjectID, textField.getText());
 			
+			if(!resp.getOperationStatus())
+				JOptionPane.showMessageDialog(null, "ERROR");
+			removeFromQueue();
 		}
 		else if(e.getSource().equals(cancelButton)){
-			
+			removeFromQueue();
 		}
 	}
 }

@@ -192,6 +192,7 @@ public class Login {
 				case 4://liberian
 				{
 					new CategoriesGUI();
+					frame.setVisible(false);
 					break;
 				}
 				

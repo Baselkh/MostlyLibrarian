@@ -1,7 +1,9 @@
 package GUI;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -35,7 +38,7 @@ import protocol.response.SubjectsInCategoryResponse;
  * @author Basel
  *
  */
-public class CategoriesGUI extends JFrame {
+public class CategoriesGUI extends AbstractQueueableWindow {
 
 	private JButton createCategoryButton;
 	private JButton deleteCategoryButton;
@@ -47,9 +50,7 @@ public class CategoriesGUI extends JFrame {
 	
 	public CategoriesGUI(){
 		super("Categories");
-		if(currentInstance != null)
-			currentInstance.dispose();
-		currentInstance= this;
+		
 		Container pane= getContentPane();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 		
@@ -82,9 +83,21 @@ public class CategoriesGUI extends JFrame {
 		}
 		pane.add(iconsPanel);
 		
+		// Back button
+		pane.add(Box.createRigidArea(new Dimension(1, 40)));
+		JButton backButton = new JButton("Go Back");
+		backButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				WindowsViewManager.removeFromQueue();
+			}
+		});
+		pane.add(backButton);
+		backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		pane.add(Box.createRigidArea(new Dimension(1, 80)));
+		
 		// Displaying
 		pack();
-		setVisible(true);
 	}
 	
 	private CategoryFolderElement makeFolderIcon(String categoryName){
@@ -104,17 +117,11 @@ public class CategoriesGUI extends JFrame {
 		mouseClickListener= new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				super.mouseClicked(e);
+				super.mouseClicked(e);	// May be not needed
 				String categoryName= ((AbstractFolderElement)e.getSource()).getName();
 				new SubjectsInCategoryGUI(categoryName);
-				setVisible(false);
 			}
 		};
-	}
-	
-	public static void reopen(){
-		if(currentInstance != null)
-			currentInstance.setVisible(true);
 	}
 	
 	public static void main(String args[]){

@@ -1,4 +1,5 @@
 package GUI;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -6,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -29,19 +31,19 @@ import protocol.response.RemoveSubjectsFromCategoryResponse;
  * @author Basel
  *
  */
-public class DeleteSubjectFromCategoruGUI extends JFrame{
-	
-	JTextField textField;
+public class DeleteSubjectFromCategoruGUI extends AbstractQueueableWindow{
+
 	private JTable table;
 	private int numOfRows, numOfCols;
 	private JButton confirmButton;
 	private JButton cancelButton;
 	private String categoryName;
-	
+
 	public DeleteSubjectFromCategoruGUI(ArrayList<String> subjectsIDs, ArrayList<String> subjectsNames, String categoryName){
 		super("Removing Subjects From Category");
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
 		this.categoryName = categoryName;
+
 		Container pane= getContentPane();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 
@@ -84,6 +86,19 @@ public class DeleteSubjectFromCategoruGUI extends JFrame{
 		confirmButton.addActionListener(handler);
 		cancelButton.addActionListener(handler);
 
+		// Back button
+		pane.add(Box.createRigidArea(new Dimension(1, 40)));
+		JButton backButton = new JButton("Go Back");
+		backButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				WindowsViewManager.removeFromQueue();
+			}
+		});
+		pane.add(backButton);
+		backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		pane.add(Box.createRigidArea(new Dimension(1, 80)));
+
 		// Displaying
 		pack();
 		setVisible(true);
@@ -92,7 +107,7 @@ public class DeleteSubjectFromCategoruGUI extends JFrame{
 	private class MyTableModel extends AbstractTableModel {
 		String[] columnNames = {"",
 				"Subject ID",
-				"Subject Name"};
+		"Subject Name"};
 		private Object[][] data;
 
 		public MyTableModel(Object[][] data){
@@ -154,7 +169,7 @@ public class DeleteSubjectFromCategoruGUI extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource() == cancelButton)
-				dispose();
+				removeFromQueue();
 			else{
 				ArrayList<String> subjectsIDs = new ArrayList<String>();
 				for(int i = 0; i < numOfRows; i++)
@@ -169,21 +184,13 @@ public class DeleteSubjectFromCategoruGUI extends JFrame{
 					RemoveSubjectsFromCategoryResponse resp= controller.removeSubjectsFromCategory(subjectsIDs, categoryName);
 					if(resp.getOperationStatus()){
 						new SubjectsInCategoryGUI(categoryName);
-						dispose();
 					}
 					else{
 						JOptionPane.showMessageDialog(null, "ERROR");
-						dispose();
+						removeFromQueue();
 					}
 				}
 			}
 		}
 	}
-	
-	@Override
-	public void dispose() {
-		super.dispose();
-		SubjectsInCategoryGUI.reopen();
-	};
-	
 }
