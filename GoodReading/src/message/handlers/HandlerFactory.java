@@ -47,54 +47,12 @@ public class HandlerFactory {
 			return new RemoveSubjectsFromCategoryRequestHandler(dbCon);
 		case RENAME_SUBJECT_REQUEST:
 			return new RenameSubjectRequestHandler(dbCon);
-	//	case SEARCH_Feedback_REQUEST:
-	// new FeedbacksGhandler(dbCon);
-//		case LABORATORYREFERRAL_REQUEST:
-//			return new LaboratoryReferralRequestHandler(dbCon);
-//		case ENTERTESTRESULT_REQUEST:
-//			return new EnterTestResultRequestHandler(dbCon);
-//		case DOCTORTYPES_REQUEST:
-//			return new DoctorTypesRequestHandler(dbCon);
-//		case DOCTORNAMES_REQUEST:
-//			return new DoctorNamesRequestHandler(dbCon);
-//		case APPOINTMENTDATETIME_REQUEST:
-//			return new AppointmentDateTimeRequestHandler(dbCon);
-//		case MAKEAPPOINTMENT_REQUEST:
-//			return new MakeAppointmentRequestHandler(dbCon);
-//		case GETAPPOINTMENTS_REQUEST:
-//			return new GetAppointmentsRequestHandler(dbCon);
-//		case DELETEAPPOINTMENT_REQUEST:
-//			return new DeleteAppointmentRequestHandler(dbCon);
-//		case DIAGNOSTICHISTORY_REQUEST:
-//			return new DiagnosticHistoryRequestHandler(dbCon);
-//		case TREATMENTHISTORY_REQUEST:
-//			return new TreatmentHistoryRequestHandler(dbCon);
-//		case VIEWTESTRESULT_REQUEST:
-//			return new ViewTestResultRequestHandler(dbCon);
-//		case PORTFOLIO_REQUEST:
-//			return new PortfolioRequestHandler(dbCon);
-//		case DOCUMENTATION_REQUEST:
-//			return new DocumintationRequestHandler(dbCon);
-//		case GETALLAPPOINTMENTS_REQUEST:
-//			return new GetAllAppointmentsRequestHandler(dbCon);
-//		case LABTYPE_REQUEST:
-//			return new LabTypesRequestHandler(dbCon);		
-//		case LABADDRESS_REQUEST:
-//			return new LabAddressRequestHandler(dbCon);
-//		case LABDATETIME_REQUEST:
-//			return new LabDateTimeRequestHandler(dbCon);
-//		case GENERATEAREFFERAL_REQUEST:
-//			return new GenerateARefferalRequestHandler(dbCon);	
-//		case MAILSENDED_REQUEST:
-//			return new MailSendedRequestHandler(dbCon);		
-//		case WEEKLYREPORT_REQUEST:
-//			return new WeeklyReportRequestHandler(dbCon);
-//		case MONTHLYREPORT_REQUEST:
-//			return new MonthlyReportRequestHandler(dbCon);
-//		case GETALLCLINICS_REQUEST:
-//			return new GetAllClinicsRequestHandler(dbCon);
-//		case REPORTSCOLLECTION_REQUEST:
-//			return new ReportCollectionRequestHandler(dbCon);
+		case CREATE_NEW_CATEGORY_REQUEST:
+			return new CreateNewCategoryRequestHandler(dbCon);
+		case DELETE_CATEGORIES_REQUEST:
+			return new DeleteCategoriesRequestHandler(dbCon);
+		case RENAME_CATEGORY_REQUEST:
+			return new RenameCategoryRequestHandler(dbCon);
 		default:
 			System.out.println("ERROR: Invalid handler type");
 			return null;

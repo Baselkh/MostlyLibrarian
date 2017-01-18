@@ -3,13 +3,19 @@ import java.util.ArrayList;
 
 import client.ui.Client;
 import protocol.request.AddSubjectToCategoryRequest;
+import protocol.request.CreateNewCategoryRequest;
+import protocol.request.DeleteCategoriesRequest;
 import protocol.request.GetAllCategoriesRequest;
 import protocol.request.RemoveSubjectsFromCategoryRequest;
+import protocol.request.RenameCategoryRequest;
 import protocol.request.RenameSubjectRequest;
 import protocol.request.SubjectsInCategoryRequest;
 import protocol.response.AddSubjectToCategoryResponse;
+import protocol.response.CreateNewCategoryResponse;
+import protocol.response.DeleteCategoriesResponse;
 import protocol.response.GetAllCategoriesResponse;
 import protocol.response.RemoveSubjectsFromCategoryResponse;
+import protocol.response.RenameCategoryResponse;
 import protocol.response.RenameSubjectResponse;
 import protocol.response.SubjectsInCategoryResponse;
 
@@ -46,6 +52,21 @@ public class CategoriesController extends AbstractController {
 	public RenameSubjectResponse renameSubject(String subjectID, String newSubjectName){
 		RenameSubjectRequest message = new RenameSubjectRequest(subjectID, newSubjectName);
 		return (RenameSubjectResponse) client.sendMessage(message);
+	}
+	
+	public CreateNewCategoryResponse createNewCategory(String categoryName){
+		CreateNewCategoryRequest message = new CreateNewCategoryRequest(categoryName);
+		return (CreateNewCategoryResponse) client.sendMessage(message);
+	}
+	
+	public DeleteCategoriesResponse deleteCategory(ArrayList<String> categories){
+		DeleteCategoriesRequest message = new DeleteCategoriesRequest(categories);
+		return (DeleteCategoriesResponse) client.sendMessage(message);
+	}
+	
+	public RenameCategoryResponse renameCategory(String oldName, String newName){
+		RenameCategoryRequest message = new RenameCategoryRequest(oldName, newName);
+		return (RenameCategoryResponse) client.sendMessage(message);
 	}
 }
 

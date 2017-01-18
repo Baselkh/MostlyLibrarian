@@ -5,6 +5,10 @@ import protocol.request.RemoveSubjectsFromCategoryRequest;
 import protocol.response.RemoveSubjectsFromCategoryResponse;
 import server.db.DBConnector;
 
+/**
+ * @author Basel
+ *
+ */
 public class RemoveSubjectsFromCategoryRequestHandler extends AbstractRequestHandler {
 	
 	public RemoveSubjectsFromCategoryRequestHandler(DBConnector dbCon) {

@@ -27,7 +27,6 @@ import protocol.response.RenameSubjectResponse;
 public class RenameSubjectGUI extends AbstractQueueableWindow implements ActionListener  {
 
 	private JTextField textField;
-	private JLabel oldName;
 	private JButton confirmButton;
 	private JButton cancelButton;
 	private String subjectID;
@@ -41,10 +40,10 @@ public class RenameSubjectGUI extends AbstractQueueableWindow implements ActionL
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
         pane.setMinimumSize(new Dimension(500, 80));
         
-        oldName= new JLabel(oldSubjectName);
-        oldName.setPreferredSize(new Dimension(400, 30));
+        JLabel oldNameLabel= new JLabel("Current Name: "+oldSubjectName);
+        oldNameLabel.setPreferredSize(new Dimension(400, 30));
         JPanel oldNameWrapper= new JPanel(new FlowLayout());
-        oldNameWrapper.add(oldName);
+        oldNameWrapper.add(oldNameLabel);
         oldNameWrapper.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         pane.add(oldNameWrapper);
         

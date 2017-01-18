@@ -12,6 +12,7 @@ import client.entities.Book;
 import client.entities.Purchases;
 import client.entities.User;
 import protocol.response.BooksInSubjectResponse;
+import protocol.response.CreateNewCategoryResponse;
 import protocol.response.RenameSubjectResponse;
 import protocol.response.SubjectsInCategoryResponse;
 import server.ui.ServerUI;
@@ -438,6 +439,48 @@ public class DBConnector {
 		catch (SQLException ex) {
 			ex.printStackTrace();
 			return new RenameSubjectResponse(false, "");
+		}
+	}
+
+	public boolean createNewCategory(String categoryName) {
+		try {
+			Statement st = connDB.createStatement();
+			st.executeUpdate("INSERT INTO categories "
+					+ "VALUES('"+categoryName+"');");
+			return true;
+		}
+		catch (SQLException ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean deleteCategories(ArrayList<String> categories) {
+		try {
+			Statement st = connDB.createStatement();
+			for(String category : categories)
+				st.executeUpdate("DELETE "
+						+ "FROM categories "
+						+ "WHERE CategoryName='"+category+"';");
+			return true;
+		}
+		catch (SQLException ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean renameCategory(String oldName, String newName) {
+		try {
+			Statement st = connDB.createStatement();
+			st.executeUpdate("UPDATE categories "
+					+ "SET CategoryName='"+newName+"'"
+					+ "WHERE CategoryName='"+oldName+"';");
+			return true;
+		}
+		catch (SQLException ex) {
+			ex.printStackTrace();
+			return false;
 		}
 	}
 	

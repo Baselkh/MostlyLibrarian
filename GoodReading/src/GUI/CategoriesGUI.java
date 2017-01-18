@@ -1,6 +1,5 @@
 package GUI;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -17,22 +16,14 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 
-import com.oracle.jrockit.jfr.ContentType;
-
-import GUI.AbstractFolderElement;
 import client.controller.CategoriesController;
 import client.controller.ControllerType;
 import client.controller.Controllers;
 import protocol.response.GetAllCategoriesResponse;
-import protocol.response.SubjectsInCategoryResponse;
 
 /**
  * @author Basel
@@ -46,7 +37,6 @@ public class CategoriesGUI extends AbstractQueueableWindow {
 	private BufferedImage folderIcon;
 	private ArrayList<String> categoriesNames;
 	private MouseAdapter mouseClickListener;
-	private static CategoriesGUI currentInstance;
 	
 	public CategoriesGUI(){
 		super("Categories");
@@ -96,6 +86,11 @@ public class CategoriesGUI extends AbstractQueueableWindow {
 		backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		pane.add(Box.createRigidArea(new Dimension(1, 80)));
 		
+		ClickListener clickListener= new ClickListener();
+		createCategoryButton.addActionListener(clickListener);
+		deleteCategoryButton.addActionListener(clickListener);
+		renameCategoryButton.addActionListener(clickListener);
+		
 		// Displaying
 		pack();
 	}
@@ -122,6 +117,18 @@ public class CategoriesGUI extends AbstractQueueableWindow {
 				new SubjectsInCategoryGUI(categoryName);
 			}
 		};
+	}
+	
+	private class ClickListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(e.getSource() == createCategoryButton)
+				new CreateCategoryGUI();
+			else if(e.getSource() == deleteCategoryButton)
+				new DeleteCategoryGUI(categoriesNames);
+			else if(e.getSource() == renameCategoryButton)
+				new SelectCategoryToRenameGUI(categoriesNames);
+		}
 	}
 	
 	public static void main(String args[]){

@@ -18,28 +18,16 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
-import client.controller.CategoriesController;
-import client.controller.ControllerType;
-import client.controller.Controllers;
-import protocol.response.DeleteCategoriesResponse;
+public class SelectCategoryToRenameGUI extends AbstractQueueableWindow {
 
-/**
- * @author Basel
- *
- */
-public class DeleteCategoryGUI extends AbstractQueueableWindow {
-	
 	private JTable table;
 	private int numOfRows, numOfCols;
 	private JButton confirmButton;
 	private JButton cancelButton;
-	private ArrayList<String> categories;
 
-	public DeleteCategoryGUI(ArrayList<String> categories){
-		super("Remove Category");
+	public SelectCategoryToRenameGUI(ArrayList<String> categoriesNames){
+		super("Choose A Category To Rename");
 
-		this.categories = categories;
-		
 		Container pane= getContentPane();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 
@@ -51,12 +39,12 @@ public class DeleteCategoryGUI extends AbstractQueueableWindow {
 		pane.add(buttonsContainer);
 
 		// Creating the table
-		numOfRows = categories.size();
+		numOfRows = categoriesNames.size();
 		numOfCols = 2;
 		Object[][] data = new Object[numOfRows][numOfCols];
 
 		int i = 0;
-		for(String s : categories){
+		for(String s : categoriesNames){
 			int j = 0;
 			data[i][j] = new Boolean(false);
 			j++;
@@ -68,7 +56,7 @@ public class DeleteCategoryGUI extends AbstractQueueableWindow {
 		table.setPreferredScrollableViewportSize(new Dimension(500, 300));
 		table.setFillsViewportHeight(true);
 		table.setSelectionMode(
-				ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+				ListSelectionModel.SINGLE_SELECTION);
 
 		//Create the scroll pane and add the table to it.
 		JScrollPane scrollPane = new JScrollPane(table);
@@ -163,23 +151,20 @@ public class DeleteCategoryGUI extends AbstractQueueableWindow {
 			if(e.getSource() == cancelButton)
 				removeFromQueue();
 			else{
-				ArrayList<String> categoriesToDelete = new ArrayList<String>();
-				for(int i = 0; i < numOfRows; i++)
-					if((Boolean)table.getValueAt(i, 0))
-						categoriesToDelete.add((String)table.getValueAt(i, 1));
-
-				if(categoriesToDelete.size() == 0)	// No category is selected to be removed
-					JOptionPane.showMessageDialog(null, "Please select categories that you wish to remove");
-				else{	// One ore more category is selected
-					CategoriesController controller= (CategoriesController) 
-							Controllers.getInstance().getController(ControllerType.CATEGORY_CONTROLLER);
-					DeleteCategoriesResponse resp= controller.deleteCategory(categoriesToDelete);
-					if(!resp.getOperationStatus()){
-						JOptionPane.showMessageDialog(null, "ERROR");
+				int i, j = -1;
+				int numOfSelectedCells = 0;
+				for(i = 0; i < numOfRows; i++)
+					if((Boolean)table.getValueAt(i, 0)){
+						numOfSelectedCells++;
+						j = i;
 					}
-					for(int i = 0; i < 2; i++)
-						removeFromQueue();
-					new CategoriesGUI();
+
+				if(numOfSelectedCells == 0)	// No subject is selected to be renamed
+					JOptionPane.showMessageDialog(null, "Please select a category that you wish rename");
+				else if(numOfSelectedCells > 1)
+					JOptionPane.showMessageDialog(null, "Please select one category only!");
+				else{	// One ore more books is selected
+					new RenameCategoryGUI((String)table.getValueAt(j, 1));
 				}
 			}
 		}
