@@ -5,14 +5,20 @@ import messages.MessageType;
 
 public class RenameSubjectResponse implements Message {
 
-	private boolean operationSuccessful;
+	private boolean operationStatus;
+	private String categoryName;
 
-	public RenameSubjectResponse(boolean operationSuccessful){
-		this.operationSuccessful= operationSuccessful;
+	public RenameSubjectResponse(boolean operationStatus, String categoryName){
+		this.operationStatus= operationStatus;
+		this.categoryName = categoryName;
 	}
 
 	public boolean getOperationStatus(){
-		return operationSuccessful;
+		return operationStatus;
+	}
+	
+	public String getCategoryName(){
+		return categoryName;
 	}
 
 	public MessageType getMessageType() {

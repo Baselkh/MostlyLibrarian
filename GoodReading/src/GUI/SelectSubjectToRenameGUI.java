@@ -161,15 +161,20 @@ public class SelectSubjectToRenameGUI extends AbstractQueueableWindow {
 			if(e.getSource() == cancelButton)
 				removeFromQueue();
 			else{
-				int i;
+				int i, j = -1;
+				int numOfSelectedCells = 0;
 				for(i = 0; i < numOfRows; i++)
-					if((Boolean)table.getValueAt(i, 0))
-						break;
+					if((Boolean)table.getValueAt(i, 0)){
+						numOfSelectedCells++;
+						j = i;
+					}
 
-				if(i == numOfRows)	// No subject is selected to be renamed
+				if(numOfSelectedCells == 0)	// No subject is selected to be renamed
 					JOptionPane.showMessageDialog(null, "Please select the subject that you wish rename");
+				else if(numOfSelectedCells > 1)
+					JOptionPane.showMessageDialog(null, "Please select one subject only!");
 				else{	// One ore more books is selected
-					new RenameSubjectGUI((String)table.getValueAt(i, 1), (String)table.getValueAt(i, 2));
+					new RenameSubjectGUI((String)table.getValueAt(j, 1), (String)table.getValueAt(j, 2));
 				}
 			}
 		}

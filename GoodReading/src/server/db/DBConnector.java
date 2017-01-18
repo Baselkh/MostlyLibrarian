@@ -12,6 +12,7 @@ import client.entities.Book;
 import client.entities.Purchases;
 import client.entities.User;
 import protocol.response.BooksInSubjectResponse;
+import protocol.response.RenameSubjectResponse;
 import protocol.response.SubjectsInCategoryResponse;
 import server.ui.ServerUI;
 
@@ -397,6 +398,7 @@ public class DBConnector {
 				rs.close();
 				return false;
 			}
+			rs.close();
 			return true;
 		}
 		catch (SQLException ex) {
@@ -420,17 +422,22 @@ public class DBConnector {
 		}
 	}
 	
-	public boolean renameSubject(String subjectID, String newSubjectName){
+	public RenameSubjectResponse renameSubject(String subjectID, String newSubjectName){
 		try {
 			Statement st = connDB.createStatement();
 			st.executeUpdate("UPDATE subjects "
 					+ "SET SubjectName='"+newSubjectName+"' "
 					+ "WHERE SubjectID='"+subjectID+"';"); 
-			return true;
+			ResultSet rs = st.executeQuery("SELECT Category "
+					+ "FROM subjects "
+					+ "WHERE subjectID='"+subjectID+"';");
+			if(!(rs.next()))
+				return new RenameSubjectResponse(false, "");
+			return new RenameSubjectResponse(true, rs.getString(1));
 		}
 		catch (SQLException ex) {
 			ex.printStackTrace();
-			return false;
+			return new RenameSubjectResponse(false, "");
 		}
 	}
 	

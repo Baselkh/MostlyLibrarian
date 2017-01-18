@@ -182,13 +182,12 @@ public class DeleteSubjectFromCategoruGUI extends AbstractQueueableWindow{
 					CategoriesController controller= (CategoriesController) 
 							Controllers.getInstance().getController(ControllerType.CATEGORY_CONTROLLER);
 					RemoveSubjectsFromCategoryResponse resp= controller.removeSubjectsFromCategory(subjectsIDs, categoryName);
-					if(resp.getOperationStatus()){
-						new SubjectsInCategoryGUI(categoryName);
-					}
-					else{
+					if(!resp.getOperationStatus()){
 						JOptionPane.showMessageDialog(null, "ERROR");
-						removeFromQueue();
 					}
+					for(int i = 0; i < 2; i++)
+						removeFromQueue();
+					new SubjectsInCategoryGUI(categoryName);
 				}
 			}
 		}

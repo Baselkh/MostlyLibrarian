@@ -36,7 +36,7 @@ public class RenameSubjectGUI extends AbstractQueueableWindow implements ActionL
 		super("Rename Subject");
 		
         this.subjectID = subjectID;
-		
+        
         Container pane= getContentPane();
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
         pane.setMinimumSize(new Dimension(500, 80));
@@ -100,7 +100,10 @@ public class RenameSubjectGUI extends AbstractQueueableWindow implements ActionL
 			
 			if(!resp.getOperationStatus())
 				JOptionPane.showMessageDialog(null, "ERROR");
-			removeFromQueue();
+			
+			for(int i = 0; i < 3; i++)
+				removeFromQueue();
+			new SubjectsInCategoryGUI(resp.getCategoryName());
 		}
 		else if(e.getSource().equals(cancelButton)){
 			removeFromQueue();

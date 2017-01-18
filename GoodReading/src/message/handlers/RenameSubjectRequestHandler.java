@@ -14,9 +14,8 @@ public class RenameSubjectRequestHandler extends AbstractRequestHandler {
 	@Override
 	public Message handle(Message msg) {
 		RenameSubjectRequest message= (RenameSubjectRequest) msg;
-		RenameSubjectResponse response= new 
-				RenameSubjectResponse(dbCon.renameSubject(message.getSubjectID(),
-						message.getNewSubjectName()));
+		RenameSubjectResponse response= dbCon.
+				renameSubject(message.getSubjectID(), message.getNewSubjectName());
 		return response;
 	}
 }

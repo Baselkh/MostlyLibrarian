@@ -93,13 +93,11 @@ public class CreateSubjectGUI extends AbstractQueueableWindow implements ActionL
 					Controllers.getInstance().getController(ControllerType.CATEGORY_CONTROLLER);
 			AddSubjectToCategoryResponse resp= controller.
 					addSubjectToCategory(categoryName, textField.getText());
-			if(resp.operationIsSuccessful()){
-				new SubjectsInCategoryGUI(categoryName);
-			}
-			else{
+			if(!resp.getOperationStatus())
 				JOptionPane.showMessageDialog(null, "ERROR");
+			for(int i = 0; i < 2; i++)
 				removeFromQueue();
-			}
+			new SubjectsInCategoryGUI(categoryName);
 		}
 		else if(e.getSource().equals(cancelButton)){
 			removeFromQueue();

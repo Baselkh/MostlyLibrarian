@@ -47,6 +47,8 @@ public class SubjectsInCategoryGUI extends AbstractQueueableWindow {
 	public SubjectsInCategoryGUI(String categoryName){
 		super(categoryName);
 		
+		this.categoryName = categoryName;
+		
 		Container pane= getContentPane();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 		

@@ -12,7 +12,7 @@ public class AddSubjectToCategoryResponse implements Message {
 		this.operationStatus = operationStatus;
 	}
 
-	public boolean operationIsSuccessful() {
+	public boolean getOperationStatus() {
 		return operationStatus;
 	}
 	
